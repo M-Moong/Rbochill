@@ -649,3 +649,11 @@ nav {
 .loginInputHover {
 	outline: none; /* 포커스 시 생기는 외곽선 제거 */
 }
+
+.discountSlideNext {
+	top: 40% !important;
+}
+
+.discountSlidePrev {
+	top: 40% !important;
+}

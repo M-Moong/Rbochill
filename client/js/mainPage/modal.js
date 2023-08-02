@@ -231,6 +231,7 @@ async function openNormalModal(e) {
 		const id = attr(li, 'data-id');
 		const response = await tiger.get(`http://localhost:3000/products/${id}`);
 		const productData = response.data;
+
 		renderNormalModal(modal, productData);
 
 		const minusBtn = getNode('.modalCartCountDown');
