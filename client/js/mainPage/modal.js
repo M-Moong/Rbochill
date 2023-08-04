@@ -1,6 +1,6 @@
 import {attr, getNode, insertLast, loadStorage, saveStorage, tiger} from '../../lib/index.js';
 
-const normalList = getNode('.recomandItem');
+const normalList = getNode('.recommendItem');
 const discountList = getNode('.discountItem');
 const modal = getNode('.modalWrapper');
 
@@ -376,17 +376,22 @@ async function openModal(e) {
 		}
 
 		const id = attr(li, 'data-id'); // li에 설정해놓은 data-id를 가져온다
-		const response = await tiger.get(`http://localhost:3000/products/${id}`);
-		const productData = response.data; // 서버에서 가져온 데이터를 담는다.
-		renderNormalModal(modal, productData); // 할인x 모달창을 렌더링 한다.
-		renderDiscountModal(modal, productData); // 할인o 모달창을 렌더링 한다.
+		const response = await tiger.get(`http://localhost:3000/products/${id}`); // 나의 로컬 서버에서 데이터를 가져온다
+		const productData = response.data; // 서버에서 가져온 데이터를 담는다
+		renderNormalModal(modal, productData); // 할인x 모달창을 렌더링 한다
+		renderDiscountModal(modal, productData); // 할인o 모달창을 렌더링 한다
 	} catch (err) {
 		console.log(err);
 	}
 }
 
-// normalList.addEventListener('click', openModal);
-// discountList.addEventListener('click', openModal);
+(function () {
+	const normalList = getNode('.recommendItem');
+	const discountList = getNode('.discountItem');
 
-normalList.addEventListener('click', openNormalModal);
-discountList.addEventListener('click', openDiscountModal);
+	normalList.addEventListener('click', openModal);
+	discountList.addEventListener('click', openModal);
+})();
+
+// normalList.addEventListener('click', openNormalModal);
+// discountList.addEventListener('click', openDiscountModal);

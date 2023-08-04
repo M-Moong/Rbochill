@@ -1,8 +1,8 @@
 import {} from '/js/common/index.js';
 import {attr, getNode, tiger} from '../lib/index.js';
-import {renderDiscountProduct, renderRecomandProduct, renderRecomandRecentlyItem} from './mainPage/index.js';
+import {renderDiscountProduct, renderRecommendProduct, renderRecommendRecentlyItem} from './mainPage/index.js';
 
-const recomandList = getNode('.recomandItem');
+const recommendList = getNode('.recommendItem');
 const discountList = getNode('.discountItem');
 const recentlyList = getNode('.recentlyItemRender');
 
@@ -14,7 +14,7 @@ async function renderProductList() {
 	try {
 		const response = await tiger.get('http://localhost:3000/products');
 		const productData = response.data;
-		productData.forEach((item) => renderRecomandProduct(recomandList, item));
+		productData.forEach((item) => renderRecommendProduct(recommendList, item));
 		productData.reverse().forEach((item) => renderDiscountProduct(discountList, item));
 	} catch (error) {
 		console.log(error);
@@ -32,7 +32,7 @@ async function renderRecentlyList() {
 		for (let i = 1; i < RecentlyData.length + 1; i++) {
 			const targetIndex = productData.findIndex((item) => item.id === RecentlyData[RecentlyData.length - i]);
 			const renderImg = productData[targetIndex];
-			renderRecomandRecentlyItem(recentlyItemRender, renderImg);
+			renderRecommendRecentlyItem(recentlyItemRender, renderImg);
 		}
 	} catch (error) {
 		console.log(error);
@@ -90,6 +90,6 @@ async function movePage(e) {
 	window.location.href = `http://localhost:5500/pages/productDetail.html`;
 }
 
-recomandList.addEventListener('click', movePage);
+recommendList.addEventListener('click', movePage);
 discountList.addEventListener('click', movePage);
 recentlyList.addEventListener('click', movePage);

@@ -1,7 +1,7 @@
 import {insertLast} from '../../lib/index.js';
 
-// # RecomandProduct 템플릿 생성 함수
-function createRecomandProduct({id = '', name = '', price = '', image = ''}) {
+// # recommendProduct 템플릿 생성 함수
+function createRecommendProduct({id = '', name = '', price = '', image = ''}) {
 	const template = /* html */ `
 	<li class='swiper-slide' data-id='${id}'>
 		<a href="http://localhost:5500/pages/productDetail.html">
@@ -22,9 +22,9 @@ function createRecomandProduct({id = '', name = '', price = '', image = ''}) {
 	return template;
 }
 
-// # RecomandProduct 템플릿 랜더링 함수
-export function renderRecomandProduct(target, data) {
-	insertLast(target, createRecomandProduct(data));
+// # recommendProduct 템플릿 랜더링 함수
+export function renderRecommendProduct(target, data) {
+	insertLast(target, createRecommendProduct(data));
 }
 
 /* -------------------------------------------------------------------------- */
