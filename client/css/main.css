@@ -1690,10 +1690,6 @@ video {
   justify-self: end;
 }
 
-#modalCartItemCountInput {
-  text-align: center;
-}
-
 /* #Cart 금액 영역 Grid 레이아웃 / 폰트 weight / input 디자인 */
 
 .cartPriceList {
@@ -2274,6 +2270,14 @@ nav {
 .loginInputHover {
   outline: none;
   /* 포커스 시 생기는 외곽선 제거 */
+}
+
+.discountSlideNext {
+  top: 40% !important;
+}
+
+.discountSlidePrev {
+  top: 40% !important;
 }
 
 .focus\:outline-none:focus {

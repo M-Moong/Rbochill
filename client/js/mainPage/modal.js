@@ -14,7 +14,7 @@ const modal = getNode('.modalWrapper');
 // 	input.value = parseInt(input.value) - 1;
 // }
 
-// # 모달창 템플릿 생성 (이 상품 어떄요?)
+// @ 모달창 템플릿 생성 (이 상품 어떄요?)
 function createNormalModal({name = '', price = '', id = ''}) {
 	const template = /* html */ `
 			<div class="modal">
@@ -55,12 +55,7 @@ function createNormalModal({name = '', price = '', id = ''}) {
 	return template;
 }
 
-// # 모달창 렌더링 (이 상품 어때요?)
-function renderNormalModal(target, data) {
-	insertLast(target, createNormalModal(data));
-}
-
-// # 모달창 템플릿 생성 (놓치면 후회할 가격)
+// @ 모달창 템플릿 생성 (놓치면 후회할 가격)
 function createDiscountModal({name = '', price = '', saleRatio = '', id = ''}) {
 	const template = /* html */ `
 			<div class="modal">
@@ -103,12 +98,23 @@ function createDiscountModal({name = '', price = '', saleRatio = '', id = ''}) {
 	return template;
 }
 
-// # 모달창 렌더링 (놓치면 후회할 가격)
+// * 모달창 렌더링 (이 상품 어때요?)
+function renderNormalModal(target, data) {
+	insertLast(target, createNormalModal(data));
+}
+
+// * 모달창 렌더링 (놓치면 후회할 가격)
 function renderDiscountModal(target, data) {
 	insertLast(target, createDiscountModal(data));
 }
 
-// # 모달창 취소하기
+// * 모달창 렌더링 함수
+function renderModal(target, data) {
+	insertLast(target, createNormalModal(data));
+	insertLast(target, createDiscountModal(data));
+}
+
+// ^ 모달창 취소하기
 function cancelModal() {
 	const reset = getNode('.modal');
 	if (reset) {
@@ -118,7 +124,7 @@ function cancelModal() {
 	}
 }
 
-// # 모달창 바깥 영역으로 취소하기
+// ^ 모달창 바깥 영역으로 취소하기
 function outsideCancelModal(e) {
 	e.preventDefault();
 
@@ -138,14 +144,14 @@ function outsideCancelModal(e) {
 	}
 }
 
-// # 모달창 tabIndex 잡기
+// % 모달창 tabIndex 잡기
 const focusFirstElement = () => {
 	const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
 	const firstFocusable = focusableElements[0];
 	firstFocusable.focus();
 };
 
-// # 모달창안에서 tabIndex가 나가지 않도록 하기
+// % 모달창안에서 tabIndex가 나가지 않도록 하기
 const trapFocus = (e) => {
 	const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
 	const firstFocusable = focusableElements[0];
@@ -358,6 +364,29 @@ async function openDiscountModal(e) {
 		console.log(error);
 	}
 }
+
+// # 모달창 열기
+async function openModal(e) {
+	try {
+		const button = e.target.closest('.cartMain');
+		const li = e.target.closest('li');
+
+		if (!button) {
+			return;
+		}
+
+		const id = attr(li, 'data-id'); // li에 설정해놓은 data-id를 가져온다
+		const response = await tiger.get(`http://localhost:3000/products/${id}`);
+		const productData = response.data; // 서버에서 가져온 데이터를 담는다.
+		renderNormalModal(modal, productData); // 할인x 모달창을 렌더링 한다.
+		renderDiscountModal(modal, productData); // 할인o 모달창을 렌더링 한다.
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+// normalList.addEventListener('click', openModal);
+// discountList.addEventListener('click', openModal);
 
 normalList.addEventListener('click', openNormalModal);
 discountList.addEventListener('click', openDiscountModal);
