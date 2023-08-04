@@ -1,8 +1,4 @@
-import {attr, getNode, insertLast, loadStorage, saveStorage, tiger} from '../../lib/index.js';
-
-const normalList = getNode('.recommendItem');
-const discountList = getNode('.discountItem');
-const modal = getNode('.modalWrapper');
+import {attr, bindEvent, getNode, getNodes, insertLast, loadStorage, saveStorage, tiger} from '../../lib/index.js';
 
 // # 플러스 버튼 클릭시 이벤트
 // function plusInput(input) {
@@ -14,7 +10,7 @@ const modal = getNode('.modalWrapper');
 // 	input.value = parseInt(input.value) - 1;
 // }
 
-// @ 모달창 템플릿 생성 (이 상품 어떄요?)
+// @ 노말모달창 템플릿 생성 (할인 X)
 function createNormalModal({name = '', price = '', id = ''}) {
 	const template = /* html */ `
 			<div class="modal">
@@ -55,7 +51,7 @@ function createNormalModal({name = '', price = '', id = ''}) {
 	return template;
 }
 
-// @ 모달창 템플릿 생성 (놓치면 후회할 가격)
+// @ 할인모달창 템플릿 생성 (할인 O)
 function createDiscountModal({name = '', price = '', saleRatio = '', id = ''}) {
 	const template = /* html */ `
 			<div class="modal">
@@ -98,19 +94,12 @@ function createDiscountModal({name = '', price = '', saleRatio = '', id = ''}) {
 	return template;
 }
 
-// * 모달창 렌더링 (이 상품 어때요?)
+// * 노말모달창 렌더링 함수 (할인 X)
 function renderNormalModal(target, data) {
 	insertLast(target, createNormalModal(data));
 }
-
-// * 모달창 렌더링 (놓치면 후회할 가격)
+// * 할인모달창 렌더링 함수 (할인 O)
 function renderDiscountModal(target, data) {
-	insertLast(target, createDiscountModal(data));
-}
-
-// * 모달창 렌더링 함수
-function renderModal(target, data) {
-	insertLast(target, createNormalModal(data));
 	insertLast(target, createDiscountModal(data));
 }
 
@@ -368,6 +357,8 @@ async function openDiscountModal(e) {
 // # 모달창 열기
 async function openModal(e) {
 	try {
+		e.preventDefault();
+
 		const button = e.target.closest('.cartMain');
 		const li = e.target.closest('li');
 
@@ -378,20 +369,29 @@ async function openModal(e) {
 		const id = attr(li, 'data-id'); // li에 설정해놓은 data-id를 가져온다
 		const response = await tiger.get(`http://localhost:3000/products/${id}`); // 나의 로컬 서버에서 데이터를 가져온다
 		const productData = response.data; // 서버에서 가져온 데이터를 담는다
-		renderNormalModal(modal, productData); // 할인x 모달창을 렌더링 한다
-		renderDiscountModal(modal, productData); // 할인o 모달창을 렌더링 한다
+
+		divideNode(e.target, productData); // 렌더링해줄 템플릿 나누기
 	} catch (err) {
 		console.log(err);
 	}
 }
 
+// # 노드에 따른 템플릿 나누기
+function divideNode(e, data) {
+	const modal = getNode('.modalWrapper');
+	if (e.closest('.recommendItem')) {
+		return renderNormalModal(modal, data);
+	}
+	if (e.closest('.discountItem')) {
+		return renderDiscountModal(modal, data);
+	}
+}
+
+// & 모달창 시작 이벤트
 (function () {
-	const normalList = getNode('.recommendItem');
-	const discountList = getNode('.discountItem');
+	const list = getNodes('.mainItem');
 
-	normalList.addEventListener('click', openModal);
-	discountList.addEventListener('click', openModal);
+	list.forEach((item) => {
+		item.addEventListener('click', openModal);
+	});
 })();
-
-// normalList.addEventListener('click', openNormalModal);
-// discountList.addEventListener('click', openDiscountModal);
