@@ -103,6 +103,17 @@ function renderDiscountModal(target, data) {
 	insertLast(target, createDiscountModal(data));
 }
 
+// ! 노드에 따른 템플릿 나누기
+function divideNode(target, data) {
+	const modal = getNode('.modalWrapper');
+	if (target.closest('.recommendItem')) {
+		return renderNormalModal(modal, data);
+	}
+	if (target.closest('.discountItem')) {
+		return renderDiscountModal(modal, data);
+	}
+}
+
 // ^ 모달창 취소하기
 function cancelModal() {
 	const reset = getNode('.modal');
@@ -131,6 +142,12 @@ function outsideCancelModal(e) {
 			document.body.style.overflowX = 'auto';
 		}
 	}
+}
+
+// ^ 모달창 스크롤 막기
+function noScroll() {
+	document.body.style.overflowY = 'hidden';
+	document.body.style.overflowX = 'hidden';
 }
 
 // % 모달창 tabIndex 잡기
@@ -359,8 +376,8 @@ async function openModal(e) {
 	try {
 		e.preventDefault();
 
-		const button = e.target.closest('.cartMain');
-		const li = e.target.closest('li');
+		const button = e.target.closest('.cartMain'); // 장바구니 담기 버튼
+		const li = e.target.closest('li'); // 상품리스트
 
 		if (!button) {
 			return;
@@ -371,23 +388,22 @@ async function openModal(e) {
 		const productData = response.data; // 서버에서 가져온 데이터를 담는다
 
 		divideNode(e.target, productData); // 렌더링해줄 템플릿 나누기
+
+		noScroll(); // 모달창 스크롤 막기
+
+		const cancel = getNode('.modalCancel'); // 취소 버튼
+
+		bindEvent(cancel, 'click', cancelModal); // 취소버튼을 눌렀을때 모달창 닫기
+
+		const outside = getNode('.modal-overlay'); // 모달창 바깥영역
+
+		bindEvent(outside, 'click', outsideCancelModal); // 바깥영역 클릭시 모달창 닫기
 	} catch (err) {
 		console.log(err);
 	}
 }
 
-// # 노드에 따른 템플릿 나누기
-function divideNode(e, data) {
-	const modal = getNode('.modalWrapper');
-	if (e.closest('.recommendItem')) {
-		return renderNormalModal(modal, data);
-	}
-	if (e.closest('.discountItem')) {
-		return renderDiscountModal(modal, data);
-	}
-}
-
-// & 모달창 시작 이벤트
+// & 모달창 이벤트
 (function () {
 	const list = getNodes('.mainItem');
 
